@@ -1,0 +1,36 @@
+/* Neumorphism Scrollbar */
+:root {
+    --bg-base: #e0e5ec;
+    --shadow-dark: #a3b1c6;
+    --shadow-light: #ffffff;
+    --accent-blue: #4dabf7;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    background: linear-gradient(145deg, #e6ebf1, #d9dfe6);
+}
+
+::-webkit-scrollbar-track {
+    background: linear-gradient(145deg, #e6ebf1, #d9dfe6);
+    border-radius: 10px;
+    box-shadow:
+        inset 2px 2px 5px var(--shadow-dark),
+        inset -2px -2px 5px var(--shadow-light);
+    margin: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(145deg, #54b3f9, #4dabf7);
+    border-radius: 10px;
+    box-shadow:
+        2px 2px 4px rgba(77, 171, 247, 0.3),
+        -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(145deg, #4dabf7, #3b9bde);
+    box-shadow:
+        3px 3px 6px rgba(77, 171, 247, 0.4),
+        -3px -3px 6px rgba(255, 255, 255, 0.8);
+}

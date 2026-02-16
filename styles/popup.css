@@ -1,0 +1,232 @@
+/* Premium Neumorphism Popup Design */
+:root {
+  --bg-base: #e0e5ec;
+  --shadow-dark: #a3b1c6;
+  --shadow-light: #ffffff;
+  --accent-blue: #4dabf7;
+  --accent-purple: #9775fa;
+  --accent-teal: #20c997;
+  --text-primary: #334155;
+  --text-secondary: #64748b;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #e8edf3 0%, #dce3eb 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', sans-serif;
+  width: 380px;
+  overflow: hidden;
+}
+
+.popup-container {
+  padding: 20px;
+  min-height: 500px;
+  max-height: 600px;
+  background: linear-gradient(145deg, #e6ebf1, #d9dfe6);
+}
+
+/* Header */
+.popup-header {
+  margin-bottom: 20px;
+}
+
+.popup-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  padding: 14px 18px;
+  background: linear-gradient(145deg, #e6ebf1, #d9dfe6);
+  border-radius: 14px;
+  box-shadow: 
+    inset 3px 3px 7px var(--shadow-dark),
+    inset -3px -3px 7px var(--shadow-light);
+  letter-spacing: 0.5px;
+}
+
+/* Action Buttons Grid */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 14px;
+  min-height: 95px;
+  border: none;
+  background: linear-gradient(145deg, #e6ebf1, #d9dfe6);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    7px 7px 14px var(--shadow-dark),
+    -7px -7px 14px var(--shadow-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.action-btn:hover::before {
+  opacity: 1;
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    9px 9px 18px var(--shadow-dark),
+    -9px -9px 18px var(--shadow-light);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+  box-shadow: 
+    inset 5px 5px 10px var(--shadow-dark),
+    inset -5px -5px 10px var(--shadow-light);
+}
+
+.btn-icon {
+  font-size: 28px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.btn-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+/* Premium Gradient Buttons */
+.action-btn:nth-child(1) {
+  background: linear-gradient(135deg, #5db6f9 0%, #4dabf7 100%);
+  box-shadow: 
+    7px 7px 14px rgba(77, 171, 247, 0.35),
+    -7px -7px 14px rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.action-btn:nth-child(1) .btn-text,
+.action-btn:nth-child(1) .btn-icon {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.action-btn:nth-child(1):hover {
+  box-shadow: 
+    9px 9px 18px rgba(77, 171, 247, 0.45),
+    -9px -9px 18px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.action-btn:nth-child(2) {
+  background: linear-gradient(135deg, #b088fc 0%, #9775fa 100%);
+  box-shadow: 
+    7px 7px 14px rgba(151, 117, 250, 0.35),
+    -7px -7px 14px rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.action-btn:nth-child(2) .btn-text,
+.action-btn:nth-child(2) .btn-icon {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.action-btn:nth-child(2):hover {
+  box-shadow: 
+    9px 9px 18px rgba(151, 117, 250, 0.45),
+    -9px -9px 18px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.action-btn:nth-child(3) {
+  background: linear-gradient(135deg, #38dba6 0%, #20c997 100%);
+  box-shadow: 
+    7px 7px 14px rgba(32, 201, 151, 0.35),
+    -7px -7px 14px rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.action-btn:nth-child(3) .btn-text,
+.action-btn:nth-child(3) .btn-icon {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.action-btn:nth-child(3):hover {
+  box-shadow: 
+    9px 9px 18px rgba(32, 201, 151, 0.45),
+    -9px -9px 18px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+/* Status Bar */
+.status-bar {
+  padding: 14px 18px;
+  background: linear-gradient(145deg, #e6ebf1, #d9dfe6);
+  border-radius: 12px;
+  box-shadow: 
+    inset 3px 3px 6px var(--shadow-dark),
+    inset -3px -3px 6px var(--shadow-light);
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+#status-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
+}
+
+/* Footer */
+.popup-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  background: linear-gradient(145deg, #e6ebf1, #d9dfe6);
+  border-radius: 12px;
+  box-shadow: 
+    inset 2px 2px 5px var(--shadow-dark),
+    inset -2px -2px 5px var(--shadow-light);
+}
+
+.popup-footer svg {
+  fill: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.popup-footer span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+}

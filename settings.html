@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coursera Automation - Settings</title>
+    <link rel="stylesheet" href="styles/settings.css">
+</head>
+
+<body>
+    <div class="settings-container">
+        <header class="settings-header">
+            <h1>⚙ Settings</h1>
+        </header>
+
+        <div class="settings-content">
+            <!-- Video Settings -->
+            <section class="settings-section">
+                <h2>Video Automation</h2>
+
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <span>Auto-play Videos</span>
+                        <small>Automatically play next video</small>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="auto-play" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <span>Default Speed</span>
+                        <small>Video playback speed</small>
+                    </div>
+                    <select id="video-speed">
+                        <option value="1">1x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="1.75">1.75x</option>
+                        <option value="2" selected>2x</option>
+                    </select>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <span>Skip Intro/Outro</span>
+                        <small>Auto-skip course intros</small>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="skip-intro" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Quiz Settings -->
+            <section class="settings-section">
+                <h2>Quiz Automation</h2>
+
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <span>Auto-answer Quizzes</span>
+                        <small>Attempt quiz answers automatically</small>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="auto-quiz">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <span>Answer Delay (seconds)</span>
+                        <small>Wait time before answering</small>
+                    </div>
+                    <input type="number" id="quiz-delay" min="1" max="10" value="3">
+                </div>
+            </section>
+
+            <!-- Advanced Settings -->
+            <section class="settings-section">
+                <h2>Advanced</h2>
+
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <span>Auto-download Certificates</span>
+                        <small>Download certs when available</small>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="auto-cert">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <span>Notification Sound</span>
+                        <small>Play sound on completion</small>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="notifications" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Save Button -->
+            <button class="save-btn" id="save-settings">Save Settings</button>
+
+            <div class="save-status" id="save-status"></div>
+        </div>
+    </div>
+
+    <script src="scripts/settings.js"></script>
+</body>
+
+</html>
