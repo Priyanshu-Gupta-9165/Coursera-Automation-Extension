@@ -1,0 +1,33 @@
+name: Release Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Create Clean Extension ZIP
+        run: |
+          mkdir extension-build
+          cp manifest.json extension-build/
+          cp -r assets extension-build/
+          cp -r scripts extension-build/
+          cp -r styles extension-build/
+          cp *.html extension-build/
+          
+          # Zip the clean folder
+          cd extension-build
+          zip -r ../coursera-extension.zip ./*
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: coursera-extension.zip
+          token: ${{ secrets.GITHUB_TOKEN }}

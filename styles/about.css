@@ -754,14 +754,14 @@ body {
 }
 
 .page-footer p {
-    font-size: 14px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--text-secondary);
     margin-bottom: 4px;
 }
 
 .footer-copy {
-    font-size: 12px !important;
+    font-size: px !important;
     color: var(--text-light) !important;
     font-weight: 400 !important;
 }
