@@ -220,8 +220,8 @@ Coursera's player tries to reset speed — **the extension fights back automatic
 *Full Stack Developer*
 
 [![GitHub](https://img.shields.io/badge/GitHub-Priyanshu--Gupta--9165-181717?style=for-the-badge&logo=github)](https://github.com/Priyanshu-Gupta-9165)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/priyanshu-gupta-9165)
-[![YouTube](https://img.shields.io/badge/YouTube-Subscribe-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/@PriyanshuGupta9165)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/priyanshu-gupta-dev)
+[![YouTube](https://img.shields.io/badge/YouTube-Subscribe-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/@Code2Tech_404)
 
 </div>
 
