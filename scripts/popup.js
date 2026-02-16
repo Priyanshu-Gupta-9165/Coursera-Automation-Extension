@@ -44,13 +44,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Handled by speed buttons below
                         return;
 
+                    case 'complete-reading':
+                        await executeAction(tab.id, 'completeReading');
+                        statusText.textContent = '📖 Auto-completing readings...';
+                        break;
+
                     case 'download-cert':
                         await executeAction(tab.id, 'downloadCert');
                         statusText.textContent = '✓ Downloading certificate';
                         break;
 
-                    case 'settings':
-                        chrome.runtime.openOptionsPage();
+                    case 'about':
+                        chrome.tabs.create({ url: chrome.runtime.getURL('about.html') });
                         return;
                 }
 

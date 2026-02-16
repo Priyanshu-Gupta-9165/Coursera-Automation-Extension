@@ -4,6 +4,7 @@ console.log('✅ Coursera Automation loaded');
 let quizAnswers = {};
 let isSkippingAll = false;
 let skipAllInterval = null;
+let isCompletingReadings = false;
 
 // Init
 if (document.readyState === 'loading') {
@@ -41,6 +42,9 @@ function init() {
                 case 'setSpeed':
                     setVideoSpeedCustom(request.speed);
                     break;
+                case 'completeReading':
+                    completeReading();
+                    break;
                 case 'downloadCert':
                     downloadCertificate();
                     break;
@@ -55,6 +59,7 @@ function init() {
 
     detectQuizFeedback();
     checkAndResumeSkipAll();
+    checkAndResumeReadingLoop();
 }
 
 // ============================================================
@@ -561,6 +566,276 @@ async function setVideoSpeedCustom(speed) {
     } catch (error) {
         console.error('Speed error:', error);
     }
+}
+
+// ============================================================
+// COMPLETE READING SECTION (Auto-loop)
+// ============================================================
+async function completeReading() {
+    const stored = await chrome.storage.local.get(['readingLoopMode']);
+
+    if (stored.readingLoopMode || isCompletingReadings) {
+        // STOP
+        stopReadingLoop();
+        return;
+    }
+
+    // START
+    await chrome.storage.local.set({
+        readingLoopMode: true,
+        readingProgress: { completed: 0 }
+    });
+    isCompletingReadings = true;
+    updateStatus('📖 Auto-completing readings started...');
+
+    await sleep(1000);
+    runReadingLoop();
+}
+
+function stopReadingLoop() {
+    isCompletingReadings = false;
+    chrome.storage.local.set({ readingLoopMode: false, readingProgress: null });
+    updateStatus('⏸ Reading auto-complete stopped');
+}
+
+async function runReadingLoop() {
+    if (!isCompletingReadings) return;
+
+    const stored = await chrome.storage.local.get(['readingLoopMode', 'readingProgress']);
+    if (!stored.readingLoopMode) {
+        isCompletingReadings = false;
+        return;
+    }
+
+    const progress = stored.readingProgress || { completed: 0 };
+
+    try {
+        // Detect page type
+        const pageType = detectPageType();
+        updateStatus('📖 Detected: ' + pageType + ' | Done: ' + progress.completed);
+        await sleep(500);
+
+        if (pageType === 'reading' || pageType === 'dialogue') {
+            // This is a reading/dialogue page — complete it
+            updateStatus('📖 Scrolling through content...');
+            await smoothScrollToBottom();
+            await sleep(800);
+
+            updateStatus('📖 Handling dialogues...');
+            await handleDialogues();
+            await sleep(500);
+
+            updateStatus('📖 Marking as complete...');
+            const marked = await clickMarkAsComplete();
+
+            progress.completed += 1;
+            await chrome.storage.local.set({ readingProgress: progress });
+
+            if (marked) {
+                updateStatus('✅ Completed #' + progress.completed + ' | Moving next...');
+            } else {
+                updateStatus('➡ No mark button, skipping #' + progress.completed + '...');
+            }
+
+            await sleep(1500);
+        } else {
+            // Not a reading — just skip to next
+            updateStatus('➡ Not a reading page, skipping...');
+            await sleep(500);
+        }
+
+        // Click Next to move forward
+        const clicked = clickNextButton();
+
+        if (clicked) {
+            // Wait for Coursera SPA to load new page
+            await sleep(3000);
+
+            // Wait for content to change
+            await waitForPageChange();
+
+            // Continue loop
+            if (isCompletingReadings) {
+                runReadingLoop();
+            }
+        } else {
+            updateStatus('🎉 All sections completed! (' + progress.completed + ' readings done)');
+            stopReadingLoop();
+        }
+    } catch (error) {
+        console.error('Reading loop error:', error);
+        updateStatus('❌ Error: ' + error.message);
+        stopReadingLoop();
+    }
+}
+
+// Detect what type of page we're on
+function detectPageType() {
+    // Check for video
+    const video = document.querySelector('video');
+    if (video) return 'video';
+
+    // Check for quiz
+    const quiz = document.querySelector(
+        '[data-testid="quiz-question"], .rc-FormPartsQuestion, .rc-QuizQuestion, [class*="Quiz"]'
+    );
+    if (quiz) return 'quiz';
+
+    // Check for dialogue/discussion
+    const dialogue = document.querySelector(
+        '[class*="discuss"], [class*="Discuss"], [class*="forum"], [class*="Forum"], ' +
+        '[data-testid="discussion"], [class*="prompt"], [class*="Prompt"]'
+    );
+    if (dialogue) return 'dialogue';
+
+    // Check for reading content (text-heavy pages)
+    const readingIndicators = document.querySelectorAll(
+        '[class*="reading"], [class*="Reading"], [class*="supplement"], [class*="Supplement"], ' +
+        '[class*="text-content"], [class*="lecture-text"], article, [role="article"], ' +
+        '[class*="item-page-content"], [class*="rc-CML"]'
+    );
+    if (readingIndicators.length > 0) return 'reading';
+
+    // Check URL patterns
+    const url = window.location.href;
+    if (url.includes('/supplement/') || url.includes('/reading/')) return 'reading';
+    if (url.includes('/discussionPrompt/') || url.includes('/discussion-prompt/')) return 'dialogue';
+
+    // Default: treat as reading (safe to scroll and mark complete)
+    return 'reading';
+}
+
+// Wait for page content to change (SPA navigation)
+function waitForPageChange() {
+    return new Promise((resolve) => {
+        const initialUrl = window.location.href;
+        let waited = 0;
+        const check = setInterval(() => {
+            waited += 500;
+            if (window.location.href !== initialUrl || waited >= 8000) {
+                clearInterval(check);
+                // Give extra time for new content to render
+                setTimeout(resolve, 1500);
+            }
+        }, 500);
+    });
+}
+
+// Auto-resume reading loop on page reload
+async function checkAndResumeReadingLoop() {
+    const stored = await chrome.storage.local.get(['readingLoopMode', 'readingProgress']);
+    if (stored.readingLoopMode) {
+        isCompletingReadings = true;
+        const p = stored.readingProgress || { completed: 0 };
+        updateStatus('🔄 Resuming reading loop (' + p.completed + ' done)...');
+        setTimeout(() => runReadingLoop(), 2000);
+    }
+}
+
+// Smoothly scroll to bottom to simulate reading
+async function smoothScrollToBottom() {
+    const scrollHeight = document.documentElement.scrollHeight;
+    const viewportHeight = window.innerHeight;
+    let currentScroll = 0;
+    const scrollStep = viewportHeight * 0.6; // Scroll 60% of viewport at a time
+
+    while (currentScroll < scrollHeight - viewportHeight) {
+        currentScroll += scrollStep;
+        window.scrollTo({ top: currentScroll, behavior: 'smooth' });
+        await sleep(400); // Pause between scrolls
+    }
+
+    // Scroll to very bottom
+    window.scrollTo({ top: scrollHeight, behavior: 'smooth' });
+    await sleep(500);
+}
+
+// Handle any dialogues/popups/modals on the page
+async function handleDialogues() {
+    // Look for common Coursera dialog triggers
+    const dialogTriggers = document.querySelectorAll(
+        '[data-testid="dialog-trigger"], button[aria-haspopup="dialog"], ' +
+        '[class*="plugin"], [class*="dialog-trigger"], ' +
+        'button[class*="open"], [data-testid="expand-button"]'
+    );
+
+    for (const trigger of dialogTriggers) {
+        try {
+            trigger.click();
+            updateStatus('📖 Opened dialogue, waiting...');
+            await sleep(1500); // Wait for dialog to fully open
+
+            // Close the dialog
+            const closeSelectors = [
+                '[data-testid="dialog-close"], [aria-label="Close"], [aria-label="close"],',
+                'button[class*="close"], button[class*="Close"],',
+                '[data-testid="close-button"], .modal-close,',
+                'button[aria-label="Close dialog"], button[aria-label="Dismiss"]'
+            ].join(' ');
+
+            const closeBtn = document.querySelector(closeSelectors);
+            if (closeBtn) {
+                closeBtn.click();
+                updateStatus('📖 Closed dialogue');
+                await sleep(500);
+            }
+        } catch (e) {
+            console.log('Dialog handling skipped:', e);
+        }
+    }
+
+    // Also check for any open modals/dialogs and close them
+    const openDialogs = document.querySelectorAll(
+        '[role="dialog"], [role="alertdialog"], .modal, [class*="Modal"], [class*="modal"]'
+    );
+
+    for (const dialog of openDialogs) {
+        const closeBtn = dialog.querySelector(
+            '[aria-label="Close"], [aria-label="close"], button[class*="close"], ' +
+            'button[class*="Close"], [data-testid="close-button"]'
+        );
+        if (closeBtn) {
+            closeBtn.click();
+            await sleep(500);
+        }
+    }
+}
+
+// Click Mark as Complete button
+async function clickMarkAsComplete() {
+    const selectors = [
+        'button[data-testid="mark-as-complete"]',
+        'button[aria-label="Mark as complete"]',
+        'button[aria-label="Mark As Complete"]',
+        '[data-testid="complete-button"]',
+        'button[class*="complete"]',
+        'button[class*="Complete"]',
+        '[data-track-component="mark_complete"]'
+    ];
+
+    for (const selector of selectors) {
+        const btn = document.querySelector(selector);
+        if (btn && !btn.disabled) {
+            btn.click();
+            console.log('✅ Clicked Mark as Complete:', selector);
+            return true;
+        }
+    }
+
+    // Fallback: find by text content
+    const allButtons = document.querySelectorAll('button, a[role="button"]');
+    for (const btn of allButtons) {
+        const text = btn.textContent.trim().toLowerCase();
+        if (text.includes('mark') && text.includes('complete')) {
+            if (!btn.disabled) {
+                btn.click();
+                console.log('✅ Clicked Mark as Complete (text match):', text);
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 function downloadCertificate() {

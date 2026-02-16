@@ -20,7 +20,7 @@
         "default_popup": "popup.html",
         "default_title": "Coursera Automation"
     },
-    "options_page": "settings.html",
+    "options_page": "about.html",
     "icons": {
         "16": "assets/icon-16.png",
         "32": "assets/icon-32.png",
