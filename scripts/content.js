@@ -38,6 +38,9 @@ function init() {
                 case 'speedControl':
                     setVideoSpeed();
                     break;
+                case 'setSpeed':
+                    setVideoSpeedCustom(request.speed);
+                    break;
                 case 'downloadCert':
                     downloadCertificate();
                     break;
@@ -505,6 +508,56 @@ async function setVideoSpeed() {
         } else {
             updateStatus('⚠ No video found');
         }
+    } catch (error) {
+        console.error('Speed error:', error);
+    }
+}
+
+let speedEnforceInterval = null;
+let speedEnforceListener = null;
+
+async function setVideoSpeedCustom(speed) {
+    try {
+        const video = document.querySelector('video');
+        if (!video) {
+            updateStatus('⚠ No video found');
+            return;
+        }
+
+        // Clear any previous speed enforcement
+        if (speedEnforceInterval) clearInterval(speedEnforceInterval);
+        if (speedEnforceListener && video) {
+            video.removeEventListener('ratechange', speedEnforceListener);
+        }
+
+        // Force set speed
+        video.playbackRate = speed;
+        updateStatus('⚡ Speed: ' + speed + 'x');
+
+        // Coursera's player resets speeds > 2x, so we fight back
+        // 1) Listen for ratechange and re-apply
+        speedEnforceListener = () => {
+            if (video.playbackRate !== speed) {
+                video.playbackRate = speed;
+            }
+        };
+        video.addEventListener('ratechange', speedEnforceListener);
+
+        // 2) Interval to keep re-applying speed (in case player resets it)
+        let enforceCount = 0;
+        speedEnforceInterval = setInterval(() => {
+            enforceCount++;
+            const v = document.querySelector('video');
+            if (v && v.playbackRate !== speed) {
+                v.playbackRate = speed;
+            }
+            // Stop enforcing after 30 seconds (60 checks × 500ms)
+            if (enforceCount >= 60) {
+                clearInterval(speedEnforceInterval);
+                speedEnforceInterval = null;
+            }
+        }, 500);
+
     } catch (error) {
         console.error('Speed error:', error);
     }

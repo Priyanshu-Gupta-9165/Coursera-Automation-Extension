@@ -37,14 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         break;
 
                     case 'auto-quiz':
-                        await executeAction(tab.id, 'autoQuiz');
-                        statusText.textContent = '✓ Quiz automation started';
-                        break;
+                        statusText.textContent = '🔒 Auto Quiz — Coming Soon!';
+                        return;
 
                     case 'speed-control':
-                        await executeAction(tab.id, 'speedControl');
-                        statusText.textContent = '✓ Speed set to 2x';
-                        break;
+                        // Handled by speed buttons below
+                        return;
 
                     case 'download-cert':
                         await executeAction(tab.id, 'downloadCert');
@@ -103,5 +101,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (request.action === 'updateStatus') {
             statusText.textContent = request.status;
         }
+    });
+    // Speed button handlers
+    const speedButtons = document.querySelectorAll('.speed-btn');
+    speedButtons.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const speed = parseInt(btn.dataset.speed);
+            statusText.textContent = 'Processing...';
+
+            try {
+                const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+                if (!tab.url || !tab.url.includes('coursera.org')) {
+                    statusText.textContent = 'Please open a Coursera page';
+                    setTimeout(() => { statusText.textContent = 'Ready'; }, 2000);
+                    return;
+                }
+
+                await ensureContentScript(tab.id);
+                await chrome.tabs.sendMessage(tab.id, { action: 'setSpeed', speed: speed });
+
+                // Highlight active button
+                speedButtons.forEach(b => b.classList.remove('active-speed'));
+                btn.classList.add('active-speed');
+
+                statusText.textContent = `⚡ Speed set to ${speed}x`;
+                setTimeout(() => { statusText.textContent = 'Ready'; }, 3000);
+            } catch (error) {
+                console.error('Speed error:', error);
+                statusText.textContent = 'Error: ' + error.message;
+                setTimeout(() => { statusText.textContent = 'Ready'; }, 3000);
+            }
+        });
     });
 });
