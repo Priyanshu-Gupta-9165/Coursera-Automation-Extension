@@ -45,8 +45,8 @@ function init() {
                 case 'completeReading':
                     completeReading();
                     break;
-                case 'downloadCert':
-                    downloadCertificate();
+                case 'nextLesson':
+                    clickNextButton();
                     break;
             }
             sendResponse({ success: true });

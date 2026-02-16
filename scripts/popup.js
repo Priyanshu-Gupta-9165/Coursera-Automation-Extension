@@ -49,9 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         statusText.textContent = '📖 Auto-completing readings...';
                         break;
 
-                    case 'download-cert':
-                        await executeAction(tab.id, 'downloadCert');
-                        statusText.textContent = '✓ Downloading certificate';
+                    case 'next-lesson':
+                        await executeAction(tab.id, 'nextLesson');
+                        statusText.textContent = '⏭ Skipping to next lesson...';
                         break;
 
                     case 'about':

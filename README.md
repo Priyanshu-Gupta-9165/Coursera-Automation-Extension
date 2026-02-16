@@ -48,7 +48,7 @@
 
 </div>
 
-<div align="center">
+
 
 ```
 1. Open Chrome → chrome://extensions/
@@ -58,7 +58,6 @@
 5. ✅ Done! Open any Coursera course and click the extension icon
 ```
 
-</div>
 
 <br>
 
